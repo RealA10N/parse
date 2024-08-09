@@ -11,5 +11,3 @@ type NodeParser[TokenT comparable, NodeT any] interface {
 	Name() string
 	Parse(view *view.View[TokenT, uint]) iter.Seq2[NodeT, error]
 }
-
-type ErrorFactory[TokenT comparable, ErrorT any] func(expected []TokenT, actual TokenT) ErrorT
