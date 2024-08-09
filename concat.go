@@ -50,14 +50,14 @@ func (p concatParser[TokenT, NodeT, ChildNodeT, OffsetT]) parseSuffix(
 	v *view.View[TokenT, OffsetT],
 	collectedPrefix []ChildNodeT,
 	k OffsetT,
-) iter.Seq2[[]ChildNodeT, Error[OffsetT]] {
-	return func(yield func([]ChildNodeT, Error[OffsetT]) bool) {
+) iter.Seq[[]ChildNodeT] {
+	return func(yield func([]ChildNodeT) bool) {
 		n := OffsetT(len(p.parsers))
 
 		// recursion base:
 		// if already collected the whole prefix, yield and return
 		if k == n {
-			yield(collectedPrefix, nil)
+			yield(collectedPrefix)
 			return
 		}
 
@@ -67,18 +67,13 @@ func (p concatParser[TokenT, NodeT, ChildNodeT, OffsetT]) parseSuffix(
 		bookmark := *v
 		curParser := p.parsers[k]
 
-		for curNode, err := range curParser.Parse(v) {
-			// if the current parser fails, backtrack.
-			if err != nil {
-				break
-			}
-
+		for curNode := range curParser.Parse(v) {
 			// if current parser parsed a node successfully, append it to
 			// the existing suffix and recurse by yielding all values from
 			// the recursive call.
 			collectedPrefix[k] = curNode
-			for node, err := range p.parseSuffix(v, collectedPrefix, k+1) {
-				if !yield(node, err) || err != nil {
+			for node := range p.parseSuffix(v, collectedPrefix, k+1) {
+				if !yield(node) {
 					return
 				}
 			}
@@ -90,12 +85,12 @@ func (p concatParser[TokenT, NodeT, ChildNodeT, OffsetT]) parseSuffix(
 
 func (p concatParser[TokenT, NodeT, ChildNodeT, OffsetT]) Parse(
 	v *view.View[TokenT, OffsetT],
-) iter.Seq2[NodeT, Error[OffsetT]] {
-	return func(yield func(NodeT, Error[OffsetT]) bool) {
+) iter.Seq[NodeT] {
+	return func(yield func(NodeT) bool) {
 		n := len(p.parsers)
 		nodes := make([]ChildNodeT, n)
-		for childNodes, err := range p.parseSuffix(v, nodes, 0) {
-			if !yield(p.propagator(childNodes), err) || err != nil {
+		for childNodes := range p.parseSuffix(v, nodes, 0) {
+			if !yield(p.propagator(childNodes)) {
 				return
 			}
 		}

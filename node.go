@@ -13,5 +13,5 @@ type NodeParser[
 	OffsetT constraints.Unsigned,
 ] interface {
 	String() string
-	Parse(view *view.View[TokenT, OffsetT]) iter.Seq2[NodeT, Error[OffsetT]]
+	Parse(view *view.View[TokenT, OffsetT]) iter.Seq[NodeT]
 }
