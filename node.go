@@ -4,10 +4,14 @@ import (
 	"iter"
 
 	"alon.kr/x/view"
+	"golang.org/x/exp/constraints"
 )
 
-type NodeParser[TokenT comparable, NodeT any] interface {
+type NodeParser[
+	TokenT comparable,
+	NodeT any,
+	OffsetT constraints.Unsigned,
+] interface {
 	String() string
-	Name() string
-	Parse(view *view.View[TokenT, uint]) iter.Seq2[NodeT, error]
+	Parse(view *view.View[TokenT, OffsetT]) iter.Seq2[NodeT, Error[OffsetT]]
 }
