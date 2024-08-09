@@ -6,8 +6,10 @@ import (
 	"alon.kr/x/view"
 )
 
-type Node[TokenT comparable, ErrorT any] interface {
-	Parse(view *view.View[TokenT, uint]) iter.Seq2[view.UnmanagedView[TokenT, uint], ErrorT]
+type NodeParser[TokenT comparable, NodeT any] interface {
+	String() string
+	Name() string
+	Parse(view *view.View[TokenT, uint]) iter.Seq2[NodeT, error]
 }
 
 type ErrorFactory[TokenT comparable, ErrorT any] func(expected []TokenT, actual TokenT) ErrorT
