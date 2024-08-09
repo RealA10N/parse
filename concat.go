@@ -7,7 +7,7 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-type ConcatNodePropagation[ChildNodeT any, NodeT any] func(nodes []ChildNodeT) NodeT
+type ConcatNodePropagator[ChildNodeT any, NodeT any] func(nodes []ChildNodeT) NodeT
 
 type concatParser[
 	TokenT comparable,
@@ -15,7 +15,7 @@ type concatParser[
 	ChildNodeT any,
 	OffsetT constraints.Unsigned,
 ] struct {
-	propagator ConcatNodePropagation[ChildNodeT, NodeT]
+	propagator ConcatNodePropagator[ChildNodeT, NodeT]
 	parsers    []NodeParser[TokenT, ChildNodeT, OffsetT]
 }
 
@@ -25,7 +25,7 @@ func Concat[
 	ChildNodeT any,
 	OffsetT constraints.Unsigned,
 ](
-	propagator ConcatNodePropagation[ChildNodeT, NodeT],
+	propagator ConcatNodePropagator[ChildNodeT, NodeT],
 	first, second NodeParser[TokenT, ChildNodeT, OffsetT],
 	additional ...NodeParser[TokenT, ChildNodeT, OffsetT],
 ) NodeParser[TokenT, NodeT, OffsetT] {
