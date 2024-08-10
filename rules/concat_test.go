@@ -1,4 +1,4 @@
-package parse_test
+package rules_test
 
 import (
 	"iter"
