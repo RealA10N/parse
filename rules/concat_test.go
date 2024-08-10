@@ -4,7 +4,7 @@ import (
 	"iter"
 	"testing"
 
-	"alon.kr/x/parse"
+	"alon.kr/x/parse/rules"
 	"alon.kr/x/view"
 	"github.com/stretchr/testify/assert"
 )
@@ -53,13 +53,14 @@ func (negativeParser) Parse(view *view.View[int, uint]) iter.Seq[child] {
 }
 
 func TestConcatSimpleCase(t *testing.T) {
-	numbersParser := parse.Concat(
+	numbersParser := rules.Concat(
 		func(nodes []child) father { return father(nodes) },
 		positiveParser{},
 		negativeParser{},
 	)
 
-	t.Log(numbersParser.String())
+	assert.Equal(t, "(+ -)", numbersParser.String())
+
 	v := view.NewView[int, uint]([]int{1, -2})
 	iter := numbersParser.Parse(&v)
 	results := [][]int{}
