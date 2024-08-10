@@ -7,7 +7,7 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-type NodeParser[
+type Rule[
 	TokenT comparable,
 	NodeT any,
 	OffsetT constraints.Unsigned,

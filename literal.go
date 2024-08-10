@@ -10,7 +10,7 @@ import (
 
 type LiteralPropagator[TokenT any, NodeT any] func(TokenT) NodeT
 
-type literalParser[
+type literalRule[
 	TokenT comparable,
 	NodeT any,
 	OffsetT constraints.Unsigned,
@@ -26,18 +26,18 @@ func Literal[
 ](
 	propagator LiteralPropagator[TokenT, NodeT],
 	token TokenT,
-) NodeParser[TokenT, NodeT, OffsetT] {
-	return literalParser[TokenT, NodeT, OffsetT]{
+) Rule[TokenT, NodeT, OffsetT] {
+	return literalRule[TokenT, NodeT, OffsetT]{
 		propagator: propagator,
 		literal:    token,
 	}
 }
 
-func (p literalParser[TokenT, NodeT, OffsetT]) String() string {
+func (p literalRule[TokenT, NodeT, OffsetT]) String() string {
 	return fmt.Sprintf("%v", p.literal)
 }
 
-func (p literalParser[TokenT, NodeT, OffsetT]) Parse(
+func (p literalRule[TokenT, NodeT, OffsetT]) Parse(
 	v *view.View[TokenT, OffsetT],
 ) iter.Seq[NodeT] {
 	return func(yield func(NodeT) bool) {
